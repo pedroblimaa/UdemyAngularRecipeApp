@@ -1,12 +1,13 @@
 <div class="row">
   <div class="col-xs-12">
-    <button class="btn btn-success">New Recipe</button>
+    <button routerLink="/recipes/new" class="btn btn-success">New Recipe</button>
   </div>
 </div>
 <hr />
 <div class="row">
   <div class="col-xs-12">
     <app-recipe-item
+      [routerLink]="['/recipes', recipeEl.id]"
       *ngFor="let recipeEl of recipes"
       [recipe]="recipeEl"
     ></app-recipe-item>
