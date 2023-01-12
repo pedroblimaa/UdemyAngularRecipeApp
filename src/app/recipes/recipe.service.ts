@@ -1,15 +1,15 @@
-import { EventEmitter, Injectable } from '@angular/core';
-import { Ingredient } from '../shared/ingredient.model';
-import { ShoppingListService } from '../shopping-list/shopping-list.service';
+import { Injectable } from '@angular/core'
+import { Ingredient } from '../shared/ingredient.model'
+import { ShoppingListService } from '../shopping-list/shopping-list.service'
 
-import { Recipe } from './recipe-list/recipe.model';
+import { Recipe } from './recipe-list/recipe.model'
+import { Subject } from 'rxjs'
 
 @Injectable({
   providedIn: 'root',
 })
 export class RecipeService {
-  recipeSelected = new EventEmitter<Recipe>();
-  sentIngredients = new EventEmitter<Ingredient[]>();
+  recipesChanged = new Subject<Recipe[]>()
 
   constructor(private slService: ShoppingListService) {}
 
@@ -28,17 +28,38 @@ export class RecipeService {
       'https://upload.wikimedia.org/wikipedia/commons/b/be/Burger_King_Angus_Bacon_%26_Cheese_Steak_Burger.jpg',
       [new Ingredient('Buns', 2), new Ingredient('Meat', 1)]
     ),
-  ];
+  ]
 
   getRecipes() {
-    return this.recipes.slice();
+    return this.recipes.slice()
   }
 
   getRecipe(id: number) {
-    return this.recipes.find((recipe) => recipe.id === id);
+    return this.recipes.find((recipe) => recipe.id === id)
   }
 
   addIngredientsToShoppingList(ingredients: Ingredient[]) {
-    this.slService.changeIngredients(ingredients);
+    this.slService.changeIngredients(ingredients)
+  }
+
+  addRecipe(recipe: Recipe) {
+    recipe.id = this.recipes.length + 1
+    this.recipes.push(recipe)
+    this.recipesChanged.next(this.recipes.slice())
+  }
+
+  updateRecipe(id: number, recipe: Recipe) {
+    const index = this.recipes.findIndex((recipe) => id === recipe.id)
+    recipe.id = id
+    this.recipes[index] = recipe
+    this.recipesChanged.next(this.recipes.slice())
+
+    console.log(this.recipes)
+  }
+
+  deleteRecipe(id: number) {
+    const index = this.recipes.findIndex((recipe) => id === recipe.id)
+    this.recipes.splice(index, 1)
+    this.recipesChanged.next(this.recipes.slice())
   }
 }
