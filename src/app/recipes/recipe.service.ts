@@ -57,6 +57,11 @@ export class RecipeService {
     console.log(this.recipes)
   }
 
+  setRecipes(recipes: Recipe[]) {
+    this.recipes = recipes
+    this.recipesChanged.next(this.recipes.slice())
+  }
+
   deleteRecipe(id: number) {
     const index = this.recipes.findIndex((recipe) => id === recipe.id)
     this.recipes.splice(index, 1)
